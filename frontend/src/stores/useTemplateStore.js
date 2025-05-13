@@ -1,0 +1,109 @@
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios.js";
+import toast from "react-hot-toast";
+
+export const useTemplateStore = create((set, get) => ({
+  templates: [],
+  categories: [],
+  filteredTemplates: [],
+  searchedTemplates: [],
+  isLoading: false,
+  isCreating: false,
+  isUpdating: false,
+  isDeleting: false,
+  username: "",
+  selectedCategory: "",
+  searchTerm: "",
+
+  setSelectedCategory: (category) => {
+    set({ selectedCategory: category });
+    const templates = get().templates;
+
+    const filteredTemplates = templates.filter(
+      (template) => template.category === category
+    );
+    set({ filteredTemplates });
+  },
+
+  setSearchTerm: (searchTerm) => {
+    set({ searchTerm });
+    const templates = get().templates;
+    const searchedTemplates = templates.filter((template) =>
+      template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    set({ searchedTemplates });
+  },
+
+  fetchTemplates: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.get("/template/getTemplates");
+      const templates = res.data.templates;
+
+      const categories = [...new Set(templates.map((template) => template.category))];
+
+      set({ templates, categories });
+    } catch (error) {
+      toast.error("Error fetching templates");
+      console.error("Error fetching templates:", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  createTemplate: async (data) => {
+    set({ isCreating: true });
+    try {
+      await axiosInstance.post("/template/createTemplate", data);
+      await get().fetchTemplates(); // this will set the new list
+      toast.success("Template created successfully");
+    } catch (error) {
+      toast.error("Error creating template");
+      console.error("Error creating template:", error);
+    } finally {
+      set({ isCreating: false });
+    }
+  },
+
+  updateTemplate: async (id, data) => {
+    set({ isUpdating: true });
+    try {
+      await axiosInstance.put(`/template/updateTemplate/${id}`, data);
+      await get().fetchTemplates(); // this will set the new list
+      toast.success("Template updated successfully");
+    } catch (error) {
+      toast.error("Error updating template");
+      console.error("Error updating template:", error);
+    } finally {
+      set({ isUpdating: false });
+    }
+  },
+
+  deleteTemplate: async (id) => {
+    set({ isDeleting: true });
+    try {
+      await axiosInstance.delete(`/template/deleteTemplate/${id}`);
+      await get().fetchTemplates(); // this will set the new list
+      toast.success("Template deleted successfully");
+    } catch (error) {
+      toast.error("Error deleting template");
+      console.error("Error deleting template:", error);
+    } finally {
+      set({ isDeleting: false });
+    }
+  },
+
+  getUserById: async (id) => {
+    set({ isLoading: true });
+    try {
+      const res = await axiosInstance.get(`/user/${id}`);
+      set({ username: res?.data.user.fullName || "Unknown" });
+    } catch (error) {
+      toast.error("Error getting userById");
+      console.error("Error getting userById:", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));
