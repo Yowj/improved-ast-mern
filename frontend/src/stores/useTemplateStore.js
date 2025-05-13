@@ -45,7 +45,6 @@ export const useTemplateStore = create((set, get) => ({
 
       set({ templates, categories });
     } catch (error) {
-      toast.error("Error fetching templates");
       console.error("Error fetching templates:", error);
     } finally {
       set({ isLoading: false });
