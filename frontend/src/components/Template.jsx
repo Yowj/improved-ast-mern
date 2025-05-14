@@ -6,11 +6,12 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
-const Template = ({ title, description, id, creatorId, category}) => {
+const Template = ({ title, description, id, creatorId, category }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isToggleDelete, setIsToggleDelete] = useState(false);
   const [isToggleEdit, setIsToggleEdit] = useState(false);
-  const { deleteTemplate, getUserById, username, categories, isLoading, updateTemplate } = useTemplateStore();
+  const { deleteTemplate, getUserById, username, categories, isLoading, updateTemplate } =
+    useTemplateStore();
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -37,13 +38,14 @@ const Template = ({ title, description, id, creatorId, category}) => {
     e.preventDefault();
     const categoryToUse = formData.newCategory || formData.category;
 
-    updateTemplate(id,{
+    updateTemplate(id, {
       title: formData.title,
       description: formData.description,
       category: categoryToUse,
-    } );
+    });
 
-    editToggle(); }
+    editToggle();
+  };
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
@@ -70,7 +72,9 @@ const Template = ({ title, description, id, creatorId, category}) => {
     <div className=" border-b border-yellow-500 py-4 mr-5">
       <button onClick={toggleOpen} className="flex justify-between items-center w-full text-left">
         <h3
-          className={`text-lg font-medium ${isOpen ? "text-yellow-500 font-bold" : "text-primary"}`}
+          className={`text-xl font-medium ${
+            isOpen ? "text-yellow-500 " : "text-primary"
+          } break-words max-w-[calc(100%-1.5rem)]`}
         >
           {title}
         </h3>
@@ -84,10 +88,9 @@ const Template = ({ title, description, id, creatorId, category}) => {
       </button>
       {isOpen && (
         <>
-          <div className="flex justify-between items-center">
-            <div className="my-3 pl-4 "></div>
+          <div className="flex justify-between items-center mt-2">
             <p
-              className=" text-secondary-content leading-relaxed cursor-pointer hover:text-yellow-500 w-full max-w-10/12"
+              className="text-secondary cursor-pointer hover:text-yellow-500 break-words max-w-10/12 pl-4"
               onClick={() => copyToClipboard(description)}
             >
               {description}

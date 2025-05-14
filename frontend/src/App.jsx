@@ -9,6 +9,7 @@ import { useTemplateStore } from "./stores/useTemplateStore";
 import { Loader } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import Footer from "./components/Footer";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
         </Route>
       </Routes>
+      <Footer />
       <Toaster
         position="bottom-left"
         toastOptions={{

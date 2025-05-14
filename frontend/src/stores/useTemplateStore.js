@@ -19,18 +19,17 @@ export const useTemplateStore = create((set, get) => ({
     set({ selectedCategory: category });
     const templates = get().templates;
 
-    const filteredTemplates = templates.filter(
-      (template) => template.category === category
-    );
+    const filteredTemplates = templates.filter((template) => template.category === category);
     set({ filteredTemplates });
   },
 
   setSearchTerm: (searchTerm) => {
     set({ searchTerm });
     const templates = get().templates;
-    const searchedTemplates = templates.filter((template) =>
-      template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      template.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const searchedTemplates = templates.filter(
+      (template) =>
+        template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        template.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
     set({ searchedTemplates });
   },
@@ -58,7 +57,7 @@ export const useTemplateStore = create((set, get) => ({
       await get().fetchTemplates(); // this will set the new list
       toast.success("Template created successfully");
     } catch (error) {
-      toast.error("Error creating template");
+      toast.error(error.response?.data?.message || "Error creating template");
       console.error("Error creating template:", error);
     } finally {
       set({ isCreating: false });
@@ -72,7 +71,7 @@ export const useTemplateStore = create((set, get) => ({
       await get().fetchTemplates(); // this will set the new list
       toast.success("Template updated successfully");
     } catch (error) {
-      toast.error("Error updating template");
+      toast.error(error.response?.data?.message || "Error updating template");
       console.error("Error updating template:", error);
     } finally {
       set({ isUpdating: false });
@@ -86,7 +85,7 @@ export const useTemplateStore = create((set, get) => ({
       await get().fetchTemplates(); // this will set the new list
       toast.success("Template deleted successfully");
     } catch (error) {
-      toast.error("Error deleting template");
+      toast.error(error.response?.data?.message || "Error deleting template");
       console.error("Error deleting template:", error);
     } finally {
       set({ isDeleting: false });
@@ -99,7 +98,7 @@ export const useTemplateStore = create((set, get) => ({
       const res = await axiosInstance.get(`/user/${id}`);
       set({ username: res?.data.user.fullName || "Unknown" });
     } catch (error) {
-      toast.error("Error getting userById");
+      toast.error(error.response?.data?.message || "Error getting userById");
       console.error("Error getting userById:", error);
     } finally {
       set({ isLoading: false });

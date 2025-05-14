@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <div className="flex bg-base-100 h-[calc(100vh-64px)] relative">
       <aside className=" w-96 bg-base-200 flex flex-col items-center h-full">
-        <div className="btn btn-secondary w-full">Show All Templates</div>
+        <div className="btn btn-secondary w-full mt-2">Show All Templates</div>
         <div className="mt-5">Categories</div>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 p-2  text-center w-full">
           {categories.map((category) => (
@@ -31,7 +31,7 @@ const Home = () => {
           ))}
         </div>
       </aside>
-      <main className="w-full max-w-8/12 ml-5 ">
+      <main className="w-full max-w-11/16 ml-5 ">
         <div className="flex items-center  relative mt-3">
           <div>
             <Search className="absolute z-5 left-2 inset-y-0 my-auto" />
@@ -49,7 +49,7 @@ const Home = () => {
         <TemplatesContainer onClose={toggleOpen} />
       </main>
       <div
-        className=" btn absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500"
+        className=" btn absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500 text-secondary"
         onClick={toggleOpen}
       >
         Create new template

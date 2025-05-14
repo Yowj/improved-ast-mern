@@ -25,7 +25,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-5rem)]">
+    <div className="flex justify-center items-center h-[calc(100vh-8rem)] -translate-y-20">
       <motion.form
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,17 +1,65 @@
-import React from 'react'
+import React, { useEffect } from "react";
+import { useThemeStore } from "../stores/useThemeStore";
+
+const themes = [
+  "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+  "synthwave", "halloween", "garden", "forest", "lofi", "pastel",
+  "fantasy", "wireframe", "black", "luxury", "dracula", "cmyk",
+  "autumn", "business", "acid", "lemonade", "night", "coffee", "winter",
+];
 
 const ThemeController = () => {
+  const { theme, setTheme } = useThemeStore();
+
+  const handleThemeChange = (e) => {
+    const selectedTheme = e.target.value;
+    setTheme(selectedTheme);
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   return (
-    <div><label className="toggle text-base-content">
-    <input type="checkbox" value="cupcake" className="theme-controller" />
-  
-    <svg aria-label="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></g></svg>
-  
-    <svg aria-label="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></g></svg>
-  
-  </label></div>
+    <div>
+      <div className="dropdown">
+        <div tabIndex={0} role="button" className="btn m-1">
+          Theme
+          <svg
+            width="12px"
+            height="12px"
+            className="inline-block h-2 w-2 fill-current opacity-60"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 2048 2048"
+          >
+            <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z" />
+          </svg>
+        </div>
+        <ul
+          tabIndex={0}
+          className="dropdown-content bg-base-300 rounded-box z-10 w-36 p-2 shadow-2xl"
+        >
+          {themes.map((item) => (
+            <li
+              key={item}
+              className={theme === item ? "bg-primary text-primary-content rounded-md" : ""}
+            >
+              <input
+                type="radio"
+                name="theme-dropdown"
+                className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                aria-label={item.charAt(0).toUpperCase() + item.slice(1)}
+                value={item}
+                onClick={handleThemeChange}
+                checked={theme === item}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
 
-  )
-}
-
-export default ThemeController
+export default ThemeController;
