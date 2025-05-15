@@ -69,12 +69,11 @@ const Template = ({ title, description, id, creatorId, category }) => {
   };
 
   return (
-    <div className=" border-b border-yellow-500 py-4 mr-5">
+    <div className=" border-b border-primary py-4 mr-5 relative">
       <button onClick={toggleOpen} className="flex justify-between items-center w-full text-left">
         <h3
-          className={`text-xl font-medium ${
-            isOpen ? "text-yellow-500 " : "text-primary"
-          } break-words max-w-[calc(100%-1.5rem)]`}
+          className={`text-xl font-medium "text-primary"
+          break-words max-w-[calc(100%-1.5rem)]`}
         >
           {title}
         </h3>
@@ -95,7 +94,7 @@ const Template = ({ title, description, id, creatorId, category }) => {
             >
               {description}
             </p>
-            <div className="flex gap-5 mr-5 cursor-pointer">
+            <div className="flex flex-col sm:flex-row gap-5 mr-5 cursor-pointer">
               <PencilLine onClick={() => editToggle()} />
               <Copy onClick={() => copyToClipboard(description)} />
               <Trash2 onClick={() => deleteToggle()} />
@@ -187,6 +186,10 @@ const Template = ({ title, description, id, creatorId, category }) => {
           </div>
         </div>
       )}
+
+      <div className="absolute right-0 bottom-0.5 text-xs text-primary mt-2 hover:text-info">
+        {category}
+      </div>
     </div>
   );
 };

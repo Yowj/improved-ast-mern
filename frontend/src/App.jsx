@@ -3,13 +3,13 @@ import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import Signup from "./pages/Signup";
 import { useAuthStore } from "./stores/useAuthStore";
 import { useTemplateStore } from "./stores/useTemplateStore";
 import { Loader } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -32,11 +32,9 @@ const App = () => {
     <div>
       <Navbar />
       <Routes>
-        <Route>
-          <Route path="/" element={authUser ? <Home /> : <Navigate to="/signup" />} />
-          <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
-          <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/" />} />
-        </Route>
+        <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
       <Toaster

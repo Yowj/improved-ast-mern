@@ -18,7 +18,6 @@ export const useTemplateStore = create((set, get) => ({
   setSelectedCategory: (category) => {
     set({ selectedCategory: category });
     const templates = get().templates;
-
     const filteredTemplates = templates.filter((template) => template.category === category);
     set({ filteredTemplates });
   },

@@ -10,25 +10,28 @@ const Navbar = () => {
   const { authUser, logout } = useAuthStore();
 
   return (
-    <div className="flex justify-between items-center bg-base-300 h-16 px-4">
+    <div className="flex justify-between items-center bg-base-300 h-16 px-4 border-primary border-b-2 shadow-lg">
       <div className="flex items-center gap-3">
         <div>
-          <Dice6 size={35} className="animate-spin" />
+          <p className="scale-200 mb-3">📚</p>
         </div>
         <div>
-          <Link to={"/"} className="text-2xl font-bold text-shadow-info-content">
-            <button class>Webnovel</button>
+          <Link
+            to="/"
+            className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 animate-gradient "
+          >
+            <button>Liber Reverie</button>
           </Link>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ">
         <div>
           <ThemeController />
         </div>
 
         {authUser && (
           <>
-            <Link to={"/profile"} className={`btn btn-sm gap-2`}>
+            <Link to={"/profile"} className={`btn gap-2`}>
               <User className="size-5" />
               <span className="hidden sm:inline">Profile</span>
             </Link>

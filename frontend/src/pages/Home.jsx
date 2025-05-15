@@ -8,25 +8,35 @@ import { Search } from "lucide-react";
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { categories, setSelectedCategory,setSearchTerm } = useTemplateStore();
+  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm } = useTemplateStore();
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
   };
 
+  const clearAll = () => {
+    setSelectedCategory("");
+    setSearchTerm("");
+  }
+
   return (
     <div className="flex bg-base-100 h-[calc(100vh-64px)] relative">
-      <aside className=" w-96 bg-base-200 flex flex-col items-center h-full">
-        <div className="btn btn-secondary w-full mt-2">Show All Templates</div>
-        <div className="mt-5">Categories</div>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 p-2  text-center w-full">
+      <aside className=" w-96 bg-base-100 flex flex-col items-center h-full p-5 ">
+        <div className="btn btn-primary w-full m-3" onClick={clearAll}>Show All Templates</div>
+        <div className="mt-2">Categories</div>
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 p-2  w-full">
           {categories.map((category) => (
             <div
               key={category}
-              className="btn w-full border-2 border-accent hover:bg-accent hover:text-base-100"
-              onClick={() => setSelectedCategory(category)}
+              id={category}
+              className={`btn w-full border-2 border-secondary hover:bg-accent hover:text-base-100 ${selectedCategory === category ? 'bg-accent text-base-100' : ''}`}
+
+              onClick={() => {
+                setSelectedCategory(category);
+                setSearchTerm(""); // clear search bar
+              }}
             >
-              <span>{category}</span>
+                 <span className="truncate block w-full">{category}</span>
             </div>
           ))}
         </div>
@@ -40,6 +50,7 @@ const Home = () => {
             <input
               type="text"
               name="searchTerm"
+              value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search templates"
               className="input input-bordered w-full max-w-1/3 pl-10"
@@ -49,7 +60,7 @@ const Home = () => {
         <TemplatesContainer onClose={toggleOpen} />
       </main>
       <div
-        className=" btn absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500 text-secondary"
+        className=" btn  absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500"
         onClick={toggleOpen}
       >
         Create new template

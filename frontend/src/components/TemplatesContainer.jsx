@@ -3,19 +3,25 @@ import Template from "./Template";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
 const TemplatesContainer = ({ toggleOpen }) => {
-  const { templates, fetchTemplates, filteredTemplates, searchTerm, searchedTemplates } =
+  const { templates, filteredTemplates, searchTerm, searchedTemplates, setSelectedCategory } =
     useTemplateStore();
 
   let displayTemplates = templates;
 
   if (searchTerm.length > 0) {
-    displayTemplates = filteredTemplates.length > 0 ? filteredTemplates : searchedTemplates;
+    displayTemplates = searchedTemplates;
   }
 
-  useEffect(() => {
-    fetchTemplates();
-  }, [fetchTemplates]);
+  if (filteredTemplates.length > 0 && searchTerm.length === 0) {
+    displayTemplates = filteredTemplates;
+  }
 
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      setSelectedCategory("");
+    }
+  }, [searchTerm, setSelectedCategory]);
   return (
     <div>
       {displayTemplates.map((template) => (
@@ -33,7 +39,7 @@ const TemplatesContainer = ({ toggleOpen }) => {
       {displayTemplates.length === 0 && (
         <div className="flex justify-center items-center h-full">
           <p className="text-gray-500">
-            No templates found. Try searching for other keyword bobo ka ba
+            No templates found. Try searching for other keyword
           </p>
         </div>
       )}

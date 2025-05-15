@@ -51,14 +51,7 @@ const Login = () => {
           <button type="submit" className="btn btn-neutral mt-4" disabled={isLoggingIn}>
             Login
           </button>
-          <div>
-            <p className="text-center mt-4">
-              Don't have an account?{" "}
-              <Link to="/signup" className="link link-primary">
-                Signup
-              </Link>
-            </p>
-          </div>
+          
         </fieldset>
       </form>
     </div>
