@@ -73,14 +73,14 @@ const Template = ({ title, description, id, creatorId, category }) => {
       <button onClick={toggleOpen} className="flex justify-between items-center w-full text-left">
         <h3
           className={`text-xl font-medium "text-primary"
-          break-words max-w-[calc(100%-1.5rem)]`}
+          break-words max-w-[calc(100%-1.5rem)] hover:text-primary cursor-pointer`}
         >
           {title}
         </h3>
         <span
           className={`transform transition-transform duration-300 ${
             isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          } `}
         >
           &#x25BC;
         </span>
