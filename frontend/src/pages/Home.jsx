@@ -20,7 +20,7 @@ const Home = () => {
   }
 
   return (
-    <div className="flex bg-base-100 h-[calc(100vh-64px)] relative">
+    <div className="flex bg-base-100 min-h-screen relative">
       <aside className=" w-96 bg-base-100 flex flex-col items-center h-full p-5 ">
         <div className="btn btn-primary w-full m-3" onClick={clearAll}>Show All Templates</div>
         <div className="mt-2">Categories</div>

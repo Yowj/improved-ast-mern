@@ -1,5 +1,4 @@
 import React from "react";
-import { Dice6 } from "lucide-react";
 import ThemeController from "./ThemeController";
 import { useAuthStore } from "../stores/useAuthStore";
 import { LogOut } from "lucide-react";
@@ -23,11 +22,12 @@ const Navbar = () => {
             <button>Liber Reverie</button>
           </Link>
         </div>
-      </div>
-      <div className="flex items-center gap-4 ">
         <div>
           <ThemeController />
         </div>
+      </div>
+      
+      <div className="flex items-center gap-4 ">
 
         {authUser && (
           <>

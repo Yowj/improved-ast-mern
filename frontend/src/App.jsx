@@ -17,8 +17,13 @@ const App = () => {
 
   useEffect(() => {
     checkAuth();
-    fetchTemplates();
-  }, [checkAuth, fetchTemplates]);
+  }, [checkAuth]);
+  
+  useEffect(() => {
+    if (authUser) {
+      fetchTemplates();
+    }
+  }, [authUser, fetchTemplates]);
 
   if (isCheckingAuth && !authUser && isLoading)
     return (

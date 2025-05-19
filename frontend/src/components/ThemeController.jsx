@@ -51,7 +51,7 @@ const ThemeController = () => {
                 className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
                 aria-label={item.charAt(0).toUpperCase() + item.slice(1)}
                 value={item}
-                onClick={handleThemeChange}
+                onChange={handleThemeChange}
                 checked={theme === item}
               />
             </li>
