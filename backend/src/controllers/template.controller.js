@@ -112,7 +112,7 @@ export const grammarEnhance = async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: process.env.OPENROUTER_API,
+        Authorization: `Bearer ${process.env.OPENROUTER_API}`
       },
       body: JSON.stringify(jsonString),
     });
