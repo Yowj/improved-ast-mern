@@ -8,7 +8,8 @@ import { Search } from "lucide-react";
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm } = useTemplateStore();
+  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm } =
+    useTemplateStore();
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
@@ -17,28 +18,33 @@ const Home = () => {
   const clearAll = () => {
     setSelectedCategory("");
     setSearchTerm("");
-  }
+  };
 
   return (
-    <div className="flex bg-base-100 mb-10 min-h-screen relative">
-      <aside className=" w-96 bg-base-100 flex flex-col items-center h-full p-5 ">
-        <div className="btn btn-primary w-full m-3" onClick={clearAll}>Show All Templates</div>
-        <div className="mt-2">Categories</div>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 p-2  w-full">
-          {categories.map((category) => (
-            <div
-              key={category}
-              id={category}
-              className={`btn w-full border-2 border-secondary hover:bg-accent hover:text-base-100 ${selectedCategory === category ? 'bg-accent text-base-100' : ''}`}
-
-              onClick={() => {
-                setSelectedCategory(category);
-                setSearchTerm(""); // clear search bar
-              }}
-            >
-                 <span className="truncate block w-full">{category}</span>
-            </div>
-          ))}
+    <div className=" flex bg-base-100 mb-10 min-h-screen relative">
+      <aside className="sticky top-1 flex flex-col h-[calc(100vh-4rem)] justify-between">
+        <div className=" w-96 flex flex-col items-center p-5  ">
+          <div className="btn btn-primary w-full m-3" onClick={clearAll}>
+            Show All Templates
+          </div>
+          <div className="mt-2">Categories</div>
+          <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 p-2  w-full pb-8 border-b-1">
+            {categories.map((category) => (
+              <div
+                key={category}
+                id={category}
+                className={`btn w-full border-2 border-secondary hover:bg-accent hover:text-base-100 ${
+                  selectedCategory === category ? "bg-accent text-base-100" : ""
+                }`}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setSearchTerm(""); // clear search bar
+                }}
+              >
+                <span className="truncate block w-full">{category}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </aside>
       <main className="w-full max-w-11/16 ml-5 ">

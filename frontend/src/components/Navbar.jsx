@@ -4,6 +4,8 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import Ai from "../pages/Ai";
+
 const Navbar = () => {
   const { authUser, logout } = useAuthStore();
 
@@ -31,6 +33,11 @@ const Navbar = () => {
         </div>
         <div>
           <ThemeController />
+        </div>
+        <div>
+          <Link className="btn" to={"/grammar-enhancer"}>
+            AI Grammar Enhancer
+          </Link>
         </div>
       </div>
 

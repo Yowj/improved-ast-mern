@@ -90,3 +90,39 @@ export const getTemplateById = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const grammarEnhance = async (req, res) => {
+  const input = req.body.input;
+  try {
+    if (!input) {
+      return res.status(401).json({ message: "No input" });
+    }
+
+    const jsonString = {
+      model: "meta-llama/llama-4-maverick:free",
+      messages: [
+        {
+          role: "user",
+          content: `Please fix the grammar and improve this sentence, make sure that you only reply with the answer sentence, do not add " in the beggining and ending, you can change the structure of the sentence to improve it:"${input}"`,
+        },
+      ],
+    };
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: process.env.OPENROUTER_API,
+      },
+      body: JSON.stringify(jsonString),
+    });
+    const data = await response.json();
+
+    const output = data.choices[0].message.content;
+
+    return res.status(200).json({ aiResponse: output });
+  } catch (error) {
+    console.error("Error fetching AI response:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

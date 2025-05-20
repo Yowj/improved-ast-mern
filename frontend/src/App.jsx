@@ -11,10 +11,11 @@ import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/ProfilePage";
+import Ai from "./pages/Ai";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-  const { fetchTemplates, isLoading } = useTemplateStore();
+  const { fetchTemplates} = useTemplateStore();
 
   useEffect(() => {
     checkAuth();
@@ -26,9 +27,9 @@ const App = () => {
     }
   }, [authUser, fetchTemplates]);
 
-  if (isCheckingAuth && !authUser && isLoading)
+  if (isCheckingAuth)
     return (
-      <div className="flex flex-cold gap-1 items-center justify-center h-screen">
+      <div className="flex flex-col gap-1 items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
         <p>Please wait</p>
       </div>
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route path="/grammar-enhancer" element= {<Ai />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
