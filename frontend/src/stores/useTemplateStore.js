@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
+import Fuse from "fuse.js";
 
 export const useTemplateStore = create((set, get) => ({
   templates: [],
@@ -25,11 +26,19 @@ export const useTemplateStore = create((set, get) => ({
   setSearchTerm: (searchTerm) => {
     set({ searchTerm });
     const templates = get().templates;
-    const searchedTemplates = templates.filter(
-      (template) =>
-        template.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        template.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  
+    const keywords = searchTerm.toLowerCase().split(" ").filter(Boolean); // remove extra spaces
+  
+    const searchedTemplates = templates.filter((template) => {
+      const title = template.title.toLowerCase();
+      const description = template.description.toLowerCase();
+  
+      // Return true if ALL keywords exist somewhere in title or description
+      return keywords.every((word) =>
+        title.includes(word) || description.includes(word)
+      );
+    });
+  
     set({ searchedTemplates });
   },
 

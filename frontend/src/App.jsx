@@ -10,6 +10,7 @@ import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -18,7 +19,7 @@ const App = () => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  
+
   useEffect(() => {
     if (authUser) {
       fetchTemplates();
@@ -39,6 +40,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
+        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

@@ -53,14 +53,14 @@ const Home = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search templates"
-              className="input input-bordered w-full max-w-1/3 pl-10"
+              className="input input-bordered w-full sm:max-w-2/3 pl-10"
             ></input>
           </div>
         </div>
         <TemplatesContainer onClose={toggleOpen} />
       </main>
       <div
-        className=" btn  absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500"
+        className=" btn absolute right-5 top-0 mt-2 hover:scale-110 hover:text-white transition-transform duration-500 invisible md:visible"
         onClick={toggleOpen}
       >
         Create new template

@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/login", login);
 router.post("/signup", signup);
 router.post("/logout", protect, logout);
-router.post("/update-profile", protect, updateProfile);
+router.put("/update-profile", protect, updateProfile);
 router.get("/check", protect, checkAuth);
 
 export default router;
