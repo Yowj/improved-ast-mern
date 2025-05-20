@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
-import Fuse from "fuse.js";
 
 export const useTemplateStore = create((set, get) => ({
   templates: [],
