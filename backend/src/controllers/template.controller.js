@@ -108,19 +108,25 @@ export const grammarEnhance = async (req, res) => {
       ],
     };
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-         "Authorization": `Bearer ${process.env.OPENROUTER_API}`
-      },
-      body: JSON.stringify(jsonString),
-    });
-    const data = await response.json();
+const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.OPENROUTER_API}`,
+  },
+  body: JSON.stringify(jsonString),
+});
 
-    const output = data.choices[0].message.content;
+const data = await response.json();
 
-    return res.status(200).json({ aiResponse: output });
+if (!data.choices || !data.choices[0]?.message?.content) {
+  console.error("OpenRouter returned unexpected data:", data);
+  return res.status(500).json({ message: "Invalid AI response from OpenRouter" });
+}
+
+const output = data.choices[0].message.content;
+return res.status(200).json({ aiResponse: output });
+
   } catch (error) {
     console.error("Error fetching AI response:", error);
     return res.status(500).json({ message: "Internal server error" });
