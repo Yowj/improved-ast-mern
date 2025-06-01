@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { LoaderIcon, X } from "lucide-react";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
 const TemplateForm = ({ onClose }) => {
@@ -88,8 +88,8 @@ const TemplateForm = ({ onClose }) => {
             value={formData.description}
             onChange={handleChange}
           ></textarea>
-          <button type="submit" className="btn btn-primary mt-2" disabled={isLoading}>
-            Create
+          <button type="submit" className="btn btn-primary mt-2 animate-pulse" disabled={isLoading}>
+            {isLoading ? <>Creating now... <LoaderIcon className="animate-spin" /> </> : "Create"}
           </button>
         </form>
         <button
