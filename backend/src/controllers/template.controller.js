@@ -99,11 +99,11 @@ export const grammarEnhance = async (req, res) => {
     }
 
     const jsonString = {
-      model: "meta-llama/llama-4-maverick:free",
+      model: "google/gemma-3-4b-it:free", //deepseek/deepseek-chat-v3-0324:free
       messages: [
         {
           role: "user",
-          content: `Please fix the grammar and improve this sentence, make sure that you only reply with the answer sentence, do not add " in the beggining and ending, you can change the structure of the sentence to improve it:"${input}"`,
+          content: `Please fix the grammar of the following, the output should only be the corrected version, nothing else, also don't put any apostrophes. You are also allowed to change the structure to make it clearer, conscise and better:"${input}"`,
         },
       ],
     };
@@ -112,7 +112,7 @@ const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.OPENROUTER_API}`,
+    "Authorization": `Bearer ${process.env.OPENROUTER_API}`,
   },
   body: JSON.stringify(jsonString),
 });
@@ -129,6 +129,6 @@ return res.status(200).json({ aiResponse: output });
 
   } catch (error) {
     console.error("Error fetching AI response:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error from OpenRouter" });
   }
 };
