@@ -38,12 +38,44 @@ const TemplatesContainer = ({ toggleOpen }) => {
     }
   }, [searchTerm, setSelectedCategory]);
 
+  // Helper function to generate page numbers - MUCH SIMPLER
+  const generatePageNumbers = () => {
+    const pages = [];
+    const delta = 2; // Show 2 pages before and after current page
+    
+    const start = Math.max(1, currentPage - delta);
+    const end = Math.min(totalPages, currentPage + delta);
+    
+    // Add first page and ellipsis if needed
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) {
+        pages.push('...');
+      }
+    }
+    
+    // Add pages around current page
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    // Add ellipsis and last page if needed
+    if (end < totalPages) {
+      if (end < totalPages - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 space-y-4 overflow-y-auto">
+      <div className="flex-1 space-y-3 overflow-y-auto">
         <AnimatePresence mode="wait">
-          <>
-            {currentTemplates.map((template) => (
+          {currentTemplates.length > 0 ? (
+            currentTemplates.map((template) => (
               <motion.div
                 key={template._id}
                 initial={{ opacity: 0, y: 10 }}
@@ -60,23 +92,21 @@ const TemplatesContainer = ({ toggleOpen }) => {
                   onClose={toggleOpen}
                 />
               </motion.div>
-            ))}
-
-            {displayTemplates.length === 0 && (
-              <motion.div
-                key="no-templates"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="flex justify-center items-center h-full"
-              >
-                <p className="text-gray-500">
-                  No templates found. Try searching for another keyword.
-                </p>
-              </motion.div>
-            )}
-          </>
+            ))
+          ) : (
+            <motion.div
+              key="no-templates"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex justify-center items-center h-full"
+            >
+              <p className="text-gray-500">
+                No templates found. Try searching for another keyword.
+              </p>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
@@ -84,7 +114,7 @@ const TemplatesContainer = ({ toggleOpen }) => {
       {displayTemplates.length > templatesPerPage && (
         <div className="flex justify-center items-center gap-2 py-4 border-t border-base-300">
           <button 
-            className="btn btn-sm btn-circle"
+            className={`btn btn-sm btn-circle ${currentPage === 1 ? 'btn-disabled' : ''}`}
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
@@ -92,36 +122,31 @@ const TemplatesContainer = ({ toggleOpen }) => {
           </button>
           
           <div className="join">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-              // Show only 5 page numbers at a time
-              if (
-                page === 1 ||
-                page === totalPages ||
-                (page >= currentPage - 2 && page <= currentPage + 2)
-              ) {
+            {generatePageNumbers().map((page, index) => {
+              if (page === '...') {
                 return (
-                  <button
-                    key={page}
-                    className={`join-item btn btn-sm ${
-                      currentPage === page ? 'btn-active' : ''
-                    }`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
+                  <span key={`ellipsis-${index}`} className="join-item btn btn-sm btn-disabled">
+                    ...
+                  </span>
                 );
-              } else if (
-                page === currentPage - 3 ||
-                page === currentPage + 3
-              ) {
-                return <span key={page} className="join-item btn btn-sm btn-disabled">...</span>;
               }
-              return null;
+              
+              return (
+                <button
+                  key={page}
+                  className={`join-item btn btn-sm ${
+                    currentPage === page ? 'btn-active btn-primary' : ''
+                  }`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              );
             })}
           </div>
           
           <button 
-            className="btn btn-sm btn-circle"
+            className={`btn btn-sm btn-circle ${currentPage === totalPages ? 'btn-disabled' : ''}`}
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >

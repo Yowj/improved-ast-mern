@@ -23,7 +23,7 @@ const Home = () => {
   };
 
   return (
-    <div className=" flex bg-base-100 mb-10 min-h-screen">
+    <div className=" flex bg-base-100 mb-10 h-[calc(100vh-7rem)]">
       <aside className="sticky top-1 flex flex-col h-[calc(100vh-4rem)] justify-between w-96">
         <div className="flex flex-col items-center p-5  ">
           <div className="btn btn-primary w-full m-3" onClick={clearAll}>
@@ -69,7 +69,7 @@ const Home = () => {
       </main>
       <div className="space-y-3 flex flex-col w-full max-w-60 p-2 ">
         <div
-          className="btn mt-2 hover:scale-110 hover:text-white transition-transform duration-500 hidden xl:flex "
+          className="btn mt-2 hover:scale-90 hover:text-white transition-transform duration-300 hidden xl:flex "
           onClick={toggleOpen}
         >
           Create new template
