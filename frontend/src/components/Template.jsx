@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
-const Template = ({ title, description, id, creatorId, category }) => {
+const Template = ({ title, description, id, creatorId, category, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isToggleDelete, setIsToggleDelete] = useState(false);
   const [isToggleEdit, setIsToggleEdit] = useState(false);
@@ -73,6 +73,9 @@ const Template = ({ title, description, id, creatorId, category }) => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success("Text copied to clipboard!");
+      if (onClose) {
+        onClose();
+      }
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
