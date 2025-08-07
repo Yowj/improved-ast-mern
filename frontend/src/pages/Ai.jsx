@@ -21,6 +21,13 @@ const Ai = () => {
     }
   };
 
+   const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      enhanceGrammar();
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-3xl mx-auto p-6 bg-base-200 rounded-2xl shadow-lg mt-[5rem]">
@@ -33,6 +40,7 @@ const Ai = () => {
           className="textarea textarea-bordered w-full h-70 mb-4"
           placeholder="Type your sentence here..."
           value={input}
+          onKeyDown={handleKeyPress}
           onChange={(e) => setInput(e.target.value)}
         ></textarea>
 

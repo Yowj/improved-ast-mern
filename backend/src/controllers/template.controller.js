@@ -99,11 +99,33 @@ export const grammarEnhance = async (req, res) => {
     }
 
     const jsonString = {
-      model: "google/gemma-3-4b-it:free", //deepseek/deepseek-chat-v3-0324:free
+      model: "qwen/qwen-2.5-72b-instruct:free", //deepseek/deepseek-chat-v3-0324:free
       messages: [
         {
           role: "user",
-          content: `Please fix the grammar of the following, the output should only be the corrected version, nothing else, also don't put any apostrophes. You are also allowed to change the structure to make it clearer, conscise and better:"${input}"`,
+          content: `Support Message Improver
+Instructions:
+Fix and improve the following support message. Make it sound natural and friendly while being clear and helpful.
+What to improve:
+
+Fix grammar and spelling mistakes
+Replace Tagalog words with English
+Improve sentence flow and structure
+Make it easier to understand
+Keep it conversational but professional
+Remove contractions (use "cannot" instead of "can't")
+
+What NOT to do:
+
+Do not make it too formal or robotic
+Do not add extra information or footnotes
+Do not change the main message or add new content
+Do not use overly fancy words
+
+Output:
+Just give me the improved version, nothing else.
+Text to improve:
+"${input}"`,
         },
       ],
     };
@@ -189,7 +211,6 @@ export const askAi = async (req, res) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Changed from GOOGLE_AI_API_KEY
-
       },
       body: JSON.stringify({
         // FIXED: Removed 'contents' wrapper
