@@ -38,7 +38,6 @@ const Navbar = () => {
       <nav className="bg-base-300 w-full border-b-2 border-primary shadow-lg sticky top-0 z-50">
         <div className="max-w-12xl w-full px-3 sm:px-4 lg:px-3">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            
             {/* Logo Section */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="text-xl sm:text-2xl">📚</div>
@@ -48,7 +47,6 @@ const Navbar = () => {
                 onClick={closeMobileMenu}
               >
                 <span>Liber Reverie</span>
-              
               </Link>
             </div>
 
@@ -68,15 +66,14 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
+              <div className="btn btn-sm gap-2 transition-all duration-200 btn-ghost hover:btn-outline">
+                <ThemeController />
+              </div>
             </div>
 
             {/* Right Section */}
             <div className="flex items-center gap-2 sm:gap-3">
-              
               {/* Theme Controller - Always visible */}
-              <div className="hidden sm:block">
-                <ThemeController />
-              </div>
 
               {authUser && (
                 <>
@@ -90,11 +87,7 @@ const Navbar = () => {
                     to="/profile"
                     className="hidden md:flex btn btn-sm gap-2 hover:btn-outline transition-all duration-200"
                   >
-                    <img 
-                      src={pic} 
-                      className="w-6 h-6 rounded-full object-cover" 
-                      alt="Profile"
-                    />
+                    <img src={pic} className="w-6 h-6 rounded-full object-cover" alt="Profile" />
                     <span className="hidden lg:inline">Profile</span>
                   </Link>
 
@@ -109,9 +102,9 @@ const Navbar = () => {
 
                   {/* Mobile Profile Avatar */}
                   <div className="md:hidden">
-                    <img 
-                      src={pic} 
-                      className="w-8 h-8 rounded-full object-cover border-2 border-primary" 
+                    <img
+                      src={pic}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-primary"
                       alt="Profile"
                     />
                   </div>
@@ -134,12 +127,11 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-base-200 bg-base-200 shadow-lg">
             <div className="max-w-7xl mx-auto px-3 py-3 space-y-2">
-              
               {/* Mobile Theme Controller */}
               <div className="flex items-center justify-between py-2">
                 <ThemeController />
               </div>
-              
+
               <div className="divider my-2"></div>
 
               {/* Navigation Items */}
@@ -162,14 +154,10 @@ const Navbar = () => {
               {authUser && (
                 <>
                   <div className="divider my-2"></div>
-                  
+
                   {/* Mobile User Info */}
                   <div className="flex items-center gap-3 p-3 bg-base-100 rounded-lg">
-                    <img 
-                      src={pic} 
-                      className="w-10 h-10 rounded-full object-cover" 
-                      alt="Profile"
-                    />
+                    <img src={pic} className="w-10 h-10 rounded-full object-cover" alt="Profile" />
                     <div>
                       <p className="font-medium text-sm">AST {name}</p>
                       <p className="text-xs opacity-60">Authenticated User</p>

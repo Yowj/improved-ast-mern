@@ -84,7 +84,7 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
         onClick={toggleOpen} 
         className="flex justify-between items-center w-full text-left group"
       >
-        <h3 className="text-lg font-medium text-primary break-words flex-1 group-hover:text-primary/80 transition-colors duration-200 pr-4">
+        <h3 className="text-xl font-medium text-primary break-words flex-1 group-hover:text-primary/80 transition-colors duration-200 pr-4">
           {title}
         </h3>
         <span className={`transform transition-transform duration-300 text-primary/60 shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`}>
@@ -96,7 +96,7 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
         <div className="mt-3">
           <div className="flex justify-between items-start gap-4">
             <p
-              className="text-secondary cursor-pointer hover:text-accent break-words break-all flex-1 transition-colors duration-200 leading-relaxed text-sm overflow-hidden"
+              className="text-secondary  cursor-pointer hover:text-accent break-words break-all flex-1 transition-colors duration-200 leading-relaxed text-sm lg:text-lg overflow-hidden"
               onClick={() => copyToClipboard(description)}
               title="Click to copy"
               style={{ wordWrap: 'break-word', overflowWrap: 'anywhere' }}
