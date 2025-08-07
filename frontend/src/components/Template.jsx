@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
-import { PencilLine } from "lucide-react";
-import { Copy } from "lucide-react";
-import { X } from "lucide-react";
+import { Trash2, PencilLine, Copy, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
@@ -82,57 +79,84 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
   };
 
   return (
-    <div className=" border-b border-primary py-4 mr-5 relative">
-      <button onClick={toggleOpen} className="flex justify-between items-center w-full text-left">
-        <h3
-          className={`text-xl font-medium "text-primary"
-          break-words max-w-[calc(100%-1.5rem)] hover:text-primary cursor-pointer`}
-        >
+    <div className="border-b border-primary/20 py-3 relative">
+      <button 
+        onClick={toggleOpen} 
+        className="flex justify-between items-center w-full text-left group"
+      >
+        <h3 className="text-lg font-medium text-primary break-words flex-1 group-hover:text-primary/80 transition-colors duration-200 pr-4">
           {title}
         </h3>
-        <span
-          className={`transform transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          } `}
-        >
-          &#x25BC;
+        <span className={`transform transition-transform duration-300 text-primary/60 shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`}>
+          ▼
         </span>
       </button>
+      
       {isOpen && (
-        <>
-          <div className="flex justify-between items-center mt-2">
+        <div className="mt-3">
+          <div className="flex justify-between items-start gap-4">
             <p
-              className="text-secondary cursor-pointer hover:text-yellow-500 break-words max-w-10/12 pl-4"
+              className="text-secondary cursor-pointer hover:text-accent break-words break-all flex-1 transition-colors duration-200 leading-relaxed text-sm overflow-hidden"
               onClick={() => copyToClipboard(description)}
+              title="Click to copy"
+              style={{ wordWrap: 'break-word', overflowWrap: 'anywhere' }}
             >
               {description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-5 mr-5 cursor-pointer">
-              <PencilLine onClick={() => editToggle()} />
-              <Copy onClick={() => copyToClipboard(description)} />
-              <Trash2 onClick={() => deleteToggle()} />
+            
+            <div className="flex gap-2 shrink-0">
+              <button
+                onClick={() => editToggle()}
+                className="btn btn-ghost btn-xs hover:btn-primary"
+                title="Edit"
+              >
+                <PencilLine className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => copyToClipboard(description)}
+                className="btn btn-ghost btn-xs hover:btn-success"
+                title="Copy"
+              >
+                <Copy className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => deleteToggle()}
+                className="btn btn-ghost btn-xs hover:btn-error"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
-          <div className="inline text-xs text-gray-700 mt-2 hover:text-lime-400 hover:animate-[wiggle_0.5s_ease-in-out_infinite]">{`Added by: ${username}`}</div>
-        </>
+          
+          <div className="text-xs text-base-content/60 mt-2">
+            Added by: {username}
+          </div>
+        </div>
       )}
 
       {isToggleDelete && (
-        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="flex flex-col gap-4 border-1 p-4 rounded shadow-lg relative w-full bg-base-200 min-w-1/4 max-w-9/12 items-center">
-            <h2 className="text-lg font-bold">Are you sure you want to delete this template?</h2>
-            <div className="flex gap-5">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="flex flex-col gap-4 sm:gap-6 border border-base-300 p-4 sm:p-6 rounded-xl shadow-2xl relative w-full bg-base-100 max-w-sm sm:max-w-md items-center">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6 text-error" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-base-content mb-2">Delete Template</h2>
+              <p className="text-sm sm:text-base text-base-content/70">Are you sure you want to delete this template? This action cannot be undone.</p>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row gap-3 w-full">
+              <button onClick={deleteToggle} className="btn btn-outline btn-sm sm:btn-md flex-1">
+                Cancel
+              </button>
               <button
                 onClick={() => {
                   deleteTemplate(id);
                   setIsToggleDelete(false);
                 }}
-                className="btn btn-primary"
+                className="btn btn-error btn-sm sm:btn-md flex-1"
               >
-                Yes
-              </button>
-              <button onClick={deleteToggle} className="btn btn-secondary">
-                No
+                Delete
               </button>
             </div>
           </div>
@@ -140,67 +164,111 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
       )}
 
       {isToggleEdit && (
-        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="flex flex-col gap-4 border-1 p-4 rounded shadow-lg relative w-full bg-base-200 max-w-2/4">
-            <h2 className="text-lg font-bold">Create New Template</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-              <input
-                type="text"
-                placeholder="Template Title"
-                className="input input-bordered w-full mt-2"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-              />
-              <select
-                name="category"
-                className="select select-bordered w-full mt-2"
-                value={formData.category}
-                onChange={handleChange}
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="flex flex-col gap-4 border border-base-300 p-4 sm:p-6 rounded-xl shadow-2xl relative w-full bg-base-100 max-w-sm sm:max-w-md lg:max-w-lg max-h-[95vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-base-content">Edit Template</h2>
+              <button
+                className="btn btn-sm btn-circle btn-ghost hover:btn-error"
+                onClick={editToggle}
+                aria-label="Close"
               >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-                <option value="1">Add new category</option>
-              </select>
-
-              {formData.category === "1" && (
+                <X size={18} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Template Title</span>
+                </label>
                 <input
                   type="text"
-                  placeholder="Add your new category here"
-                  className="input input-bordered w-full mt-2"
-                  name="newCategory"
-                  value={formData.newCategory}
+                  placeholder="Template Title"
+                  className="input input-bordered w-full text-sm sm:text-base focus:input-primary"
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
+                  required
                 />
+              </div>
+              
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Category</span>
+                </label>
+                <select
+                  name="category"
+                  className="select select-bordered w-full text-sm sm:text-base focus:select-primary"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                  <option value="1">Add new category</option>
+                </select>
+              </div>
+
+              {formData.category === "1" && (
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium">New Category Name</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Add your new category here"
+                    className="input input-bordered w-full text-sm sm:text-base focus:input-primary"
+                    name="newCategory"
+                    value={formData.newCategory}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               )}
 
-              <textarea
-                placeholder="Template Description"
-                className="textarea textarea-bordered w-full mt-2"
-                rows="10"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              ></textarea>
-              <button type="submit" className="btn btn-primary mt-2" disabled={isLoading}>
-                Save
-              </button>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium">Template Content</span>
+                </label>
+                <textarea
+                  placeholder="Template Description"
+                  className="textarea textarea-bordered w-full h-32 sm:h-40 text-sm sm:text-base focus:textarea-primary resize-none"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                ></textarea>
+              </div>
+              
+              <div className="flex flex-col-reverse sm:flex-row gap-3">
+                <button 
+                  type="button"
+                  onClick={editToggle}
+                  className="btn btn-outline btn-sm sm:btn-md flex-1"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary btn-sm sm:btn-md flex-1" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
             </form>
-            <button
-              className=" absolute top-2 right-2 text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={editToggle}
-            >
-              <X size={24} color="red" />
-            </button>
           </div>
         </div>
       )}
 
-      <div className="absolute right-0 bottom-0.5 text-xs text-primary mt-2 hover:text-info">
+      {/* Category Badge */}
+      <div className="absolute right-0 bottom-1 text-xs text-primary/70 hover:text-primary transition-colors duration-200">
         {category}
       </div>
     </div>

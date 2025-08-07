@@ -1,17 +1,22 @@
 import { useState } from "react";
 import React from "react";
 import TemplateForm from "../components/TemplateForm";
-import TemplatesContainer from "../components/TemplatesContainer";
+import TemplatesContainer, { usePaginationData } from "../components/TemplatesContainer";
 import { useTemplateStore } from "../stores/useTemplateStore";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import OnlineUsers from "../components/OnlineUsers";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const templatesPerPage = 11;
 
-
-  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm } =
+  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm, templates, filteredTemplates, searchedTemplates } =
     useTemplateStore();
+  
+  const { displayTemplates, totalPages, hasMultiplePages } = usePaginationData(
+    templates, filteredTemplates, searchTerm, searchedTemplates, templatesPerPage
+  );
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
@@ -20,10 +25,41 @@ const Home = () => {
   const clearAll = () => {
     setSelectedCategory("");
     setSearchTerm("");
+    setCurrentPage(1);
+  };
+
+  // Generate page numbers for pagination
+  const generatePageNumbers = () => {
+    const pages = [];
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const delta = isMobile ? 1 : 2;
+    
+    const start = Math.max(1, currentPage - delta);
+    const end = Math.min(totalPages, currentPage + delta);
+    
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) {
+        pages.push('...');
+      }
+    }
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    if (end < totalPages) {
+      if (end < totalPages - 1) {
+        pages.push('...');
+      }
+      pages.push(totalPages);
+    }
+    
+    return pages;
   };
 
   return (
-    <div className="flex bg-base-100 mb-10 min-h-[calc(100vh-7rem)]">
+    <div className="flex bg-base-100 min-h-[calc(100vh-8rem)] sm:min-h-[calc(100vh-7rem)] pb-4 sm:pb-10">
       {/* Responsive Sidebar */}
       <aside className="hidden lg:flex sticky top-1 flex-col h-[calc(100vh-4rem)] w-72 xl:w-80 shrink-0">
         <div className="flex flex-col items-center p-4 xl:p-5">
@@ -66,28 +102,31 @@ const Home = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <div className="lg:hidden bg-base-200/50 border-b border-base-300 p-3 sticky top-0 z-30">
-          <div className="flex gap-2 mb-3">
-            <button className="btn btn-primary btn-sm flex-1" onClick={clearAll}>
-              All Templates
+        {/* Enhanced Mobile Header */}
+        <div className="lg:hidden bg-base-200/80 backdrop-blur-sm border-b border-base-300 p-3 sm:p-4 sticky top-0 z-30 shadow-sm">
+          <div className="flex gap-2 sm:gap-3 mb-3">
+            <button className="btn btn-primary btn-sm sm:btn-md flex-1 shadow-sm" onClick={clearAll}>
+              <span className="truncate">All Templates</span>
             </button>
             <button 
-              className="btn btn-secondary btn-sm flex-1 gap-1 shadow-md" 
+              className="btn btn-secondary btn-sm sm:btn-md flex-1 gap-1 sm:gap-2 shadow-sm" 
               onClick={toggleOpen}
             >
               <Plus className="w-4 h-4" />
-              Create
+              <span className="hidden xs:inline">Create</span>
+              <span className="xs:hidden">+</span>
             </button>
           </div>
           
-          {/* Mobile Categories */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.slice(0, 5).map((category) => (
+          {/* Enhanced Mobile Categories */}
+          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 ">
+            {categories.map((category) => (
               <button
                 key={category}
-                className={`btn btn-xs whitespace-nowrap ${
-                  selectedCategory === category ? "btn-accent" : "btn-ghost"
+                className={`btn btn-xs sm:btn-sm whitespace-nowrap px-2 sm:px-3 ${
+                  selectedCategory === category 
+                    ? "btn-accent shadow-md" 
+                    : "btn-ghost hover:btn-neutral"
                 }`}
                 onClick={() => {
                   setSelectedCategory(category);
@@ -97,41 +136,95 @@ const Home = () => {
                 {category}
               </button>
             ))}
-            {categories.length > 5 && (
-              <button className="btn btn-xs btn-ghost opacity-50">
-                +{categories.length - 5} more
-              </button>
-            )}
+          
           </div>
         </div>
 
         {/* Search and Content */}
-        <main className="flex-1 p-3 sm:p-4 lg:p-6">
-          {/* Search Bar */}
-          <div className="flex items-center relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/50 z-10" size={18} />
+        <main className="flex-1 p-3 sm:p-4 lg:p-6 pb-20 lg:pb-4">
+          {/* Enhanced Search Bar */}
+          <div className="flex items-center relative mb-4 sm:mb-6">
+            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-base-content/50 z-10" size={16} />
             <input
               type="text"
               name="searchTerm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search templates..."
-              className="input input-bordered w-full pl-10 focus:input-primary"
+              className="input input-bordered input-sm sm:input-md w-full pl-9 sm:pl-12 pr-3 sm:pr-4 focus:input-primary transition-all duration-200 text-sm sm:text-base"
             />
+            {searchTerm && (
+              <button
+                className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
+                onClick={() => setSearchTerm("")}
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
           
-          <TemplatesContainer toggleOpen={toggleOpen} />
+          <TemplatesContainer 
+            toggleOpen={toggleOpen} 
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage}
+            templatesPerPage={templatesPerPage}
+          />
+          
+          {/* Pagination - Better positioned at bottom of content */}
+          {hasMultiplePages && (
+            <div className="flex justify-center items-center gap-2 py-6 mt-8">
+              <button 
+                className={`btn btn-sm btn-circle ${currentPage === 1 ? 'btn-disabled' : 'btn-ghost'}`}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                ‹
+              </button>
+              
+              <div className="join">
+                {generatePageNumbers().map((page, index) => {
+                  if (page === '...') {
+                    return (
+                      <span key={`ellipsis-${index}`} className="join-item btn btn-sm btn-disabled">
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  return (
+                    <button
+                      key={page}
+                      className={`join-item btn btn-sm ${
+                        currentPage === page ? 'btn-primary' : 'btn-ghost'
+                      }`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <button 
+                className={`btn btn-sm btn-circle ${currentPage === totalPages ? 'btn-disabled' : 'btn-ghost'}`}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                ›
+              </button>
+            </div>
+          )}
         </main>
       </div>
 
-      {/* Floating Action Button - Mobile/Tablet */}
-      <div className="lg:hidden fixed bottom-6 right-6 z-40">
+      {/* Enhanced Floating Action Button - Mobile/Tablet */}
+      <div className="lg:hidden fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-40">
         <button
-          className="btn btn-secondary btn-circle w-16 h-16 shadow-2xl hover:shadow-secondary/25 hover:scale-110 transition-all duration-300 group border-2 border-secondary/30"
+          className="btn btn-secondary btn-circle w-14 h-14 sm:w-16 sm:h-16 shadow-2xl hover:shadow-secondary/25 hover:scale-110 transition-all duration-300 group border-2 border-secondary/20 active:scale-95"
           onClick={toggleOpen}
           aria-label="Create new template"
         >
-          <Plus className="w-7 h-7 group-hover:rotate-180 transition-transform duration-500" />
+          <Plus className="w-6 h-6 sm:w-7 sm:h-7 group-hover:rotate-180 transition-transform duration-500" />
         </button>
       </div>
 

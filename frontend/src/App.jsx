@@ -37,25 +37,31 @@ const App = () => {
     );
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-base-100">
       <Navbar />
-      <Routes>
-        <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
-        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-        <Route path="/grammar-enhancer" element= {<Ai />} />
-        <Route path="/askAi" element= {<AiChat />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <main className="flex-1 relative">
+        <Routes>
+          <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
+          <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+          <Route path="/grammar-enhancer" element= {<Ai />} />
+          <Route path="/askAi" element= {<AiChat />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
       <Footer />
       <Toaster
         position="bottom-left"
         toastOptions={{
           duration: 2500,
           style: {
-            background: "rgba(0, 0, 0, 0.5)", // semi-transparent black
+            background: "rgba(0, 0, 0, 0.5)",
             color: "#fff",
-            backdropFilter: "blur(4px)", // optional: adds a blur effect
+            backdropFilter: "blur(4px)",
+            fontSize: "14px",
+            padding: "12px 16px",
+            borderRadius: "8px",
+            maxWidth: "320px",
           },
         }}
       />

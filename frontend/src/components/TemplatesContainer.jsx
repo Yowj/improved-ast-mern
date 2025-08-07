@@ -3,13 +3,9 @@ import Template from "./Template";
 import { useTemplateStore } from "../stores/useTemplateStore";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TemplatesContainer = ({ toggleOpen }) => {
+const TemplatesContainer = ({ toggleOpen, currentPage, setCurrentPage, templatesPerPage = 11 }) => {
   const { templates, filteredTemplates, searchTerm, searchedTemplates, setSelectedCategory, getUserById } =
     useTemplateStore();
-    
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const templatesPerPage = 11; // Adjust kung ilan gusto mo per page
 
   let displayTemplates = templates;
 
@@ -29,8 +25,10 @@ const TemplatesContainer = ({ toggleOpen }) => {
 
   // Reset to page 1 when search term or filter changes
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, filteredTemplates]);
+    if (setCurrentPage) {
+      setCurrentPage(1);
+    }
+  }, [searchTerm, filteredTemplates, setCurrentPage]);
 
   useEffect(() => {
     if (searchTerm.length > 0) {
@@ -48,15 +46,50 @@ const TemplatesContainer = ({ toggleOpen }) => {
     });
   }, [displayTemplates, getUserById]);
 
-  // Helper function to generate page numbers - MUCH SIMPLER
+  // Smart responsive pagination generator
   const generatePageNumbers = () => {
     const pages = [];
-    const delta = 2; // Show 2 pages before and after current page
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640; // sm breakpoint
+    const delta = isMobile ? 1 : 2; // Show fewer pages on mobile
+    const maxMobilePages = 3; // Maximum page buttons on mobile
     
+    // Mobile-first approach
+    if (isMobile && totalPages > maxMobilePages + 2) {
+      // Always show first page
+      if (currentPage > 2) {
+        pages.push(1);
+        if (currentPage > 3) {
+          pages.push('...');
+        }
+      }
+      
+      // Show current page and immediate neighbors
+      const start = Math.max(1, currentPage - 1);
+      const end = Math.min(totalPages, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) {
+          pages.push(i);
+        }
+      }
+      
+      // Always show last page
+      if (currentPage < totalPages - 1) {
+        if (currentPage < totalPages - 2) {
+          pages.push('...');
+        }
+        if (!pages.includes(totalPages)) {
+          pages.push(totalPages);
+        }
+      }
+      
+      return pages;
+    }
+    
+    // Desktop logic (original)
     const start = Math.max(1, currentPage - delta);
     const end = Math.min(totalPages, currentPage + delta);
     
-    // Add first page and ellipsis if needed
     if (start > 1) {
       pages.push(1);
       if (start > 2) {
@@ -64,12 +97,10 @@ const TemplatesContainer = ({ toggleOpen }) => {
       }
     }
     
-    // Add pages around current page
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
     
-    // Add ellipsis and last page if needed
     if (end < totalPages) {
       if (end < totalPages - 1) {
         pages.push('...');
@@ -81,91 +112,63 @@ const TemplatesContainer = ({ toggleOpen }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 space-y-3 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          {currentTemplates.length > 0 ? (
-            currentTemplates.map((template) => (
-              <motion.div
-                key={template._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
-              >
-                <Template
-                  id={template._id}
-                  title={template.title}
-                  description={template.description}
-                  category={template.category}
-                  creatorId={template.creatorId}
-                  onClose={toggleOpen}
-                />
-              </motion.div>
-            ))
-          ) : (
+    <div className="space-y-3">
+      <AnimatePresence mode="wait">
+        {currentTemplates.length > 0 ? (
+          currentTemplates.map((template) => (
             <motion.div
-              key="no-templates"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="flex justify-center items-center h-full"
+              key={template._id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              <p className="text-gray-500">
-                No templates found. Try searching for another keyword.
-              </p>
+              <Template
+                id={template._id}
+                title={template.title}
+                description={template.description}
+                category={template.category}
+                creatorId={template.creatorId}
+                onClose={toggleOpen}
+              />
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Pagination Controls */}
-      {displayTemplates.length > templatesPerPage && (
-        <div className="flex justify-center items-center gap-2 py-4 border-t border-base-300">
-          <button 
-            className={`btn btn-sm btn-circle ${currentPage === 1 ? 'btn-disabled' : ''}`}
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+          ))
+        ) : (
+          <motion.div
+            key="no-templates"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="flex justify-center items-center py-12"
           >
-            ‹
-          </button>
-          
-          <div className="join">
-            {generatePageNumbers().map((page, index) => {
-              if (page === '...') {
-                return (
-                  <span key={`ellipsis-${index}`} className="join-item btn btn-sm btn-disabled">
-                    ...
-                  </span>
-                );
-              }
-              
-              return (
-                <button
-                  key={page}
-                  className={`join-item btn btn-sm ${
-                    currentPage === page ? 'btn-active btn-primary' : ''
-                  }`}
-                  onClick={() => setCurrentPage(page)}
-                >
-                  {page}
-                </button>
-              );
-            })}
-          </div>
-          
-          <button 
-            className={`btn btn-sm btn-circle ${currentPage === totalPages ? 'btn-disabled' : ''}`}
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            ›
-          </button>
-        </div>
-      )}
+            <p className="text-gray-500">
+              No templates found. Try searching for another keyword.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
+};
+
+// Export pagination utilities for use in parent component
+export const usePaginationData = (templates, filteredTemplates, searchTerm, searchedTemplates, templatesPerPage) => {
+  let displayTemplates = templates;
+
+  if (searchTerm.length > 0) {
+    displayTemplates = searchedTemplates;
+  }
+
+  if (filteredTemplates.length > 0 && searchTerm.length === 0) {
+    displayTemplates = filteredTemplates;
+  }
+
+  return {
+    displayTemplates,
+    totalPages: Math.ceil(displayTemplates.length / templatesPerPage),
+    hasMultiplePages: displayTemplates.length > templatesPerPage
+  };
 };
 
 export default TemplatesContainer;
