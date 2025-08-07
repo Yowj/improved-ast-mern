@@ -4,7 +4,7 @@ import { useTemplateStore } from "../stores/useTemplateStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 const TemplatesContainer = ({ toggleOpen }) => {
-  const { templates, filteredTemplates, searchTerm, searchedTemplates, setSelectedCategory } =
+  const { templates, filteredTemplates, searchTerm, searchedTemplates, setSelectedCategory, getUserById } =
     useTemplateStore();
     
   // Pagination states
@@ -37,6 +37,16 @@ const TemplatesContainer = ({ toggleOpen }) => {
       setSelectedCategory("");
     }
   }, [searchTerm, setSelectedCategory]);
+
+  // Prefetch usernames for all unique creators when templates change
+  useEffect(() => {
+    const uniqueCreatorIds = [...new Set(displayTemplates.map(template => template.creatorId))];
+    uniqueCreatorIds.forEach(creatorId => {
+      if (creatorId) {
+        getUserById(creatorId); // This will cache the username
+      }
+    });
+  }, [displayTemplates, getUserById]);
 
   // Helper function to generate page numbers - MUCH SIMPLER
   const generatePageNumbers = () => {

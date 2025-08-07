@@ -11,7 +11,7 @@ export const useTemplateStore = create((set, get) => ({
   isCreating: false,
   isUpdating: false,
   isDeleting: false,
-  username: "",
+  usernames: {},
   selectedCategory: "",
   searchTerm: "",
 
@@ -100,15 +100,31 @@ export const useTemplateStore = create((set, get) => ({
   },
 
   getUserById: async (id) => {
-    set({ isLoading: true });
+    const { usernames } = get();
+    
+    // If username already cached, don't fetch again
+    if (usernames[id]) {
+      return usernames[id];
+    }
+
     try {
       const res = await axiosInstance.get(`/user/${id}`);
-      set({ username: res?.data.user.fullName || "Unknown" });
+      const username = res?.data.user.fullName || "Unknown";
+      
+      // Cache the username by user ID
+      set({ usernames: { ...usernames, [id]: username } });
+      return username;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error getting userById");
       console.error("Error getting userById:", error);
-    } finally {
-      set({ isLoading: false });
+      const fallbackName = "Unknown";
+      set({ usernames: { ...usernames, [id]: fallbackName } });
+      return fallbackName;
     }
+  },
+
+  // Helper function to get username from cache
+  getUsernameById: (id) => {
+    const { usernames } = get();
+    return usernames[id] || "Loading...";
   },
 }));

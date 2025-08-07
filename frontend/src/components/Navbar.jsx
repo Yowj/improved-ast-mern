@@ -39,6 +39,11 @@ const Navbar = () => {
             AI Grammar Enhancer
           </Link>
         </div>
+        <div>
+          <Link className="btn" to={"/askAi"}>
+            AI Chat Bot
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 ">

@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/ProfilePage";
 import Ai from "./pages/Ai";
+import AiChat from "./pages/AiChat";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/grammar-enhancer" element= {<Ai />} />
+        <Route path="/askAi" element= {<AiChat />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

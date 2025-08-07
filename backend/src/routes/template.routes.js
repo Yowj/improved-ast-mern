@@ -5,7 +5,8 @@ import {
   getTemplateById,
   getTemplates,
   updateTemplate,
-  grammarEnhance
+  grammarEnhance,
+  askAi
 } from "../controllers/template.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -18,5 +19,6 @@ router.put("/updateTemplate/:id", protect, updateTemplate);
 router.delete("/deleteTemplate/:id", protect, deleteTemplate);
 router.get("/getTemplateById/:id", protect, getTemplateById);
 router.post("/grammarEnhance", grammarEnhance)
+router.post("/ask",  askAi)
 
 export default router;

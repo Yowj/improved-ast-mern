@@ -10,15 +10,25 @@ const Template = ({ title, description, id, creatorId, category }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isToggleDelete, setIsToggleDelete] = useState(false);
   const [isToggleEdit, setIsToggleEdit] = useState(false);
-  const { deleteTemplate, getUserById, username, categories, isLoading, updateTemplate } =
+  const { deleteTemplate, getUserById, getUsernameById, categories, isLoading, updateTemplate } =
     useTemplateStore();
+
+  const [username, setUsername] = useState("Loading...");
 
   useEffect(() => {
     const fetchUserName = async () => {
-      await getUserById(creatorId);
+      const fetchedUsername = await getUserById(creatorId);
+      setUsername(fetchedUsername);
     };
-    fetchUserName();
-  }, [getUserById, creatorId]);
+    
+    // Check if username is already cached
+    const cachedUsername = getUsernameById(creatorId);
+    if (cachedUsername !== "Loading...") {
+      setUsername(cachedUsername);
+    } else {
+      fetchUserName();
+    }
+  }, [getUserById, getUsernameById, creatorId]);
 
   const [formData, setFormData] = useState({
     title: title,

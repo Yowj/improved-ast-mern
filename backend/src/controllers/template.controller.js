@@ -108,27 +108,128 @@ export const grammarEnhance = async (req, res) => {
       ],
     };
 
-const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${process.env.OPENROUTER_API}`,
-  },
-  body: JSON.stringify(jsonString),
-});
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENROUTER_API}`,
+      },
+      body: JSON.stringify(jsonString),
+    });
 
-const data = await response.json();
+    const data = await response.json();
 
-if (!data.choices || !data.choices[0]?.message?.content) {
-  console.error("OpenRouter returned unexpected data:", data);
-  return res.status(500).json({ message: "Invalid AI response from OpenRouter" });
-}
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      console.error("OpenRouter returned unexpected data:", data);
+      return res.status(500).json({ message: "Invalid AI response from OpenRouter" });
+    }
 
-const output = data.choices[0].message.content;
-return res.status(200).json({ aiResponse: output });
-
+    const output = data.choices[0].message.content;
+    return res.status(200).json({ aiResponse: output });
   } catch (error) {
     console.error("Error fetching AI response:", error);
     return res.status(500).json({ message: "Internal server error from OpenRouter" });
+  }
+};
+
+function buildTemplatePrompt(templates, question) {
+  let prompt = `### Role
+- Primary Function: You are a helpful Webnovel customer support AI assistant. You help authors and readers with their inquiries about contracts, payments, publishing, and platform features. You aim to provide accurate, friendly, and efficient replies at all times.
+
+### Response Guidelines
+- Use plain text only - NO markdown formatting (**bold**, *italic*, etc.)
+- Keep responses conversational and natural
+- Always end with a positive note or offer to help further
+- If information is incomplete, guide users to official resources
+- Use bullet points with "•" if listing multiple items
+
+### Constraints
+1. Only answer questions related to Webnovel platform, publishing, contracts, payments, and writing
+2. If asked about unrelated topics, politely redirect: "I'm here to help with Webnovel-related questions. Is there anything about publishing, contracts, or payments I can assist you with?"
+3. Base answers exclusively on the provided training data
+4. If training data doesn't cover the question, refer to official resources
+5. Do not add any signatures or footnotes
+
+### Official Resources for Additional Help
+- Webnovel Help Center: https://help.webnovel.com
+- Inkstone (Author Dashboard): https://inkstone.webnovel.com  
+- Webnovel Academy: https://inkstone.webnovel.com/academy
+- Contact Support: support@webnovel.com
+
+### Training Data:\n`;
+
+  templates.forEach((template) => {
+    prompt += `* ${template.title}: ${template.description}\n`;
+  });
+
+  prompt += `\n### Response Format
+- If the question is covered by training data: Provide a helpful answer based on the information above
+- If partially covered: Answer what you can and direct to official resources
+- If not covered: "I don't have specific information about that in my knowledge base. For detailed assistance, please visit https://help.webnovel.com or contact support@webnovel.com for personalized help."
+- Always offer additional assistance at the end`;
+
+  return prompt;
+}
+
+export const askAi = async (req, res) => {
+  try {
+    const { question } = req.body;
+
+    // Validate input
+    if (!question) {
+      return res.status(400).json({ message: "Question is required" });
+    }
+
+    const templates = await Template.find();
+    const templatePrompt = buildTemplatePrompt(templates, question);
+
+    // FIXED: Correct OpenRouter API format
+    const response = await fetch(`https://openrouter.ai/api/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Changed from GOOGLE_AI_API_KEY
+
+      },
+      body: JSON.stringify({
+        // FIXED: Removed 'contents' wrapper
+        model: "qwen/qwen-2.5-72b-instruct:free", // Fixed model name
+        messages: [
+          {
+            role: "system",
+            content: templatePrompt,
+          },
+          {
+            role: "user",
+            content: question,
+          },
+        ],
+        max_tokens: 2000,
+        temperature: 0.3,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("API Error:", errorText);
+      throw new Error(`API request failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("API Response:", data); // For debugging
+
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      throw new Error("Invalid AI response format");
+    }
+
+    const aiResponse = data.choices[0].message.content;
+    return res.status(200).json({ aiResponse });
+  } catch (error) {
+    console.error("Error in askAi:", error);
+
+    return res.status(500).json({
+      message: "Failed to generate AI response",
+      error: error.message,
+    });
   }
 };
