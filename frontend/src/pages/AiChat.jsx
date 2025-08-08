@@ -8,14 +8,7 @@ export default function AiChat() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const underconstruction = true;
-  if (underconstruction) {
-    return (
-      <div className="flex items-center justify-center h-screen text-center">
-        <h1 className="text-5xl font-bold mb-4 text-error">alaws pa, coming soon</h1>
-      </div>
-    );
-  }
+ 
 
   const handleAskAi = async () => {
     if (!question.trim()) {

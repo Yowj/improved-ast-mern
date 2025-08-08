@@ -11,11 +11,23 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const templatesPerPage = 11;
 
-  const { categories, selectedCategory, setSelectedCategory, setSearchTerm, searchTerm, templates, filteredTemplates, searchedTemplates } =
-    useTemplateStore();
-  
-  const { displayTemplates, totalPages, hasMultiplePages } = usePaginationData(
-    templates, filteredTemplates, searchTerm, searchedTemplates, templatesPerPage
+  const {
+    categories,
+    selectedCategory,
+    setSelectedCategory,
+    setSearchTerm,
+    searchTerm,
+    templates,
+    filteredTemplates,
+    searchedTemplates,
+  } = useTemplateStore();
+
+  const { totalPages, hasMultiplePages } = usePaginationData(
+    templates,
+    filteredTemplates,
+    searchTerm,
+    searchedTemplates,
+    templatesPerPage
   );
 
   const toggleOpen = () => {
@@ -31,30 +43,30 @@ const Home = () => {
   // Generate page numbers for pagination
   const generatePageNumbers = () => {
     const pages = [];
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     const delta = isMobile ? 1 : 2;
-    
+
     const start = Math.max(1, currentPage - delta);
     const end = Math.min(totalPages, currentPage + delta);
-    
+
     if (start > 1) {
       pages.push(1);
       if (start > 2) {
-        pages.push('...');
+        pages.push("...");
       }
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     if (end < totalPages) {
       if (end < totalPages - 1) {
-        pages.push('...');
+        pages.push("...");
       }
       pages.push(totalPages);
     }
-    
+
     return pages;
   };
 
@@ -76,7 +88,7 @@ const Home = () => {
             <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
             Create New Template
           </div>
-          
+
           {/* Categories Section */}
           <div className="w-full">
             <div className="mb-4 font-semibold text-base-content text-center">Categories</div>
@@ -105,11 +117,14 @@ const Home = () => {
         {/* Enhanced Mobile Header */}
         <div className="lg:hidden bg-base-200/80 backdrop-blur-sm border-b border-base-300 p-3 sm:p-4 sticky top-0 z-30 shadow-sm">
           <div className="flex gap-2 sm:gap-3 mb-3">
-            <button className="btn btn-primary btn-sm sm:btn-md flex-1 shadow-sm" onClick={clearAll}>
+            <button
+              className="btn btn-primary btn-sm sm:btn-md flex-1 shadow-sm"
+              onClick={clearAll}
+            >
               <span className="truncate">All Templates</span>
             </button>
-            <button 
-              className="btn btn-secondary btn-sm sm:btn-md flex-1 gap-1 sm:gap-2 shadow-sm" 
+            <button
+              className="btn btn-secondary btn-sm sm:btn-md flex-1 gap-1 sm:gap-2 shadow-sm"
               onClick={toggleOpen}
             >
               <Plus className="w-4 h-4" />
@@ -117,15 +132,15 @@ const Home = () => {
               <span className="xs:hidden">+</span>
             </button>
           </div>
-          
+
           {/* Enhanced Mobile Categories */}
           <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 ">
             {categories.map((category) => (
               <button
                 key={category}
                 className={`btn btn-xs sm:btn-sm whitespace-nowrap px-2 sm:px-3 ${
-                  selectedCategory === category 
-                    ? "btn-accent shadow-md" 
+                  selectedCategory === category
+                    ? "btn-accent shadow-md"
                     : "btn-ghost hover:btn-neutral"
                 }`}
                 onClick={() => {
@@ -136,7 +151,6 @@ const Home = () => {
                 {category}
               </button>
             ))}
-          
           </div>
         </div>
 
@@ -144,7 +158,10 @@ const Home = () => {
         <main className="flex-1 p-3 sm:p-4 lg:p-6 pb-20 lg:pb-4">
           {/* Enhanced Search Bar */}
           <div className="flex items-center relative mb-4 sm:mb-6">
-            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-base-content/50 z-10" size={16} />
+            <Search
+              className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-base-content/50 z-10"
+              size={16}
+            />
             <input
               type="text"
               name="searchTerm"
@@ -162,40 +179,42 @@ const Home = () => {
               </button>
             )}
           </div>
-          
-          <TemplatesContainer 
-            toggleOpen={toggleOpen} 
-            currentPage={currentPage} 
+
+          <TemplatesContainer
+            toggleOpen={toggleOpen}
+            currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             templatesPerPage={templatesPerPage}
           />
-          
+
           {/* Pagination - Better positioned at bottom of content */}
           {hasMultiplePages && (
             <div className="flex justify-center items-center gap-2 py-6 mt-8">
-              <button 
-                className={`btn btn-sm btn-circle ${currentPage === 1 ? 'btn-disabled' : 'btn-ghost'}`}
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              <button
+                className={`btn btn-sm btn-circle ${
+                  currentPage === 1 ? "btn-disabled" : "btn-ghost"
+                }`}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 ‹
               </button>
-              
+
               <div className="join">
                 {generatePageNumbers().map((page, index) => {
-                  if (page === '...') {
+                  if (page === "...") {
                     return (
                       <span key={`ellipsis-${index}`} className="join-item btn btn-sm btn-disabled">
                         ...
                       </span>
                     );
                   }
-                  
+
                   return (
                     <button
                       key={page}
                       className={`join-item btn btn-sm ${
-                        currentPage === page ? 'btn-primary' : 'btn-ghost'
+                        currentPage === page ? "btn-primary" : "btn-ghost"
                       }`}
                       onClick={() => setCurrentPage(page)}
                     >
@@ -204,10 +223,12 @@ const Home = () => {
                   );
                 })}
               </div>
-              
-              <button 
-                className={`btn btn-sm btn-circle ${currentPage === totalPages ? 'btn-disabled' : 'btn-ghost'}`}
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+
+              <button
+                className={`btn btn-sm btn-circle ${
+                  currentPage === totalPages ? "btn-disabled" : "btn-ghost"
+                }`}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
                 ›
