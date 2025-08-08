@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Trash2, PencilLine, Copy, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useTemplateStore } from "../stores/useTemplateStore";
 
-const Template = ({ title, description, id, creatorId, category, onClose }) => {
+const Template = ({ title, description, id, creatorId, category }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isToggleDelete, setIsToggleDelete] = useState(false);
   const [isToggleEdit, setIsToggleEdit] = useState(false);
@@ -55,7 +55,7 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
   };
 
   const toggleOpen = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(prev => !prev);
   };
 
   const deleteToggle = () => {
@@ -70,9 +70,6 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success("Text copied to clipboard!");
-      if (onClose) {
-        onClose();
-      }
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
@@ -87,7 +84,7 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
         <h3 className="text-xl font-medium text-primary break-words flex-1 group-hover:text-primary/80 transition-colors duration-200 pr-4">
           {title}
         </h3>
-        <span className={`transform transition-transform duration-300 text-primary/60 shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`}>
+        <span className={`transform transition-transform duration-200 text-primary/60 shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`}>
           ▼
         </span>
       </button>
@@ -275,4 +272,4 @@ const Template = ({ title, description, id, creatorId, category, onClose }) => {
   );
 };
 
-export default Template;
+export default memo(Template);
