@@ -16,7 +16,7 @@ app.use(
     origin:
       process.env.NODE_ENV === "development"
         ? "http://localhost:5173"
-        : "https://improved-ast-mern.vercel.app",
+        : process.env.FRONTEND_URL,
     credentials: true,
   })
 );
