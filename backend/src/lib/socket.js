@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 const app = express();
 const server = http.createServer(app);
 dotenv.config();
-const origin = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://improved-ast-mern.vercel.app";
+const origin = process.env.NODE_ENV === "development" ? "http://localhost:5173" : process.env.FRONTEND_URL;
 
 const io = new Server(server, {
   cors: {
