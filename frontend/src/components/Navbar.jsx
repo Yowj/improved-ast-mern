@@ -51,7 +51,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-2">
+            {authUser && <div className="hidden lg:flex items-center gap-2">
               {navigationItems.map((item) => (
                 <Link
                   key={item.path}
@@ -69,7 +69,7 @@ const Navbar = () => {
               <div className="btn btn-sm gap-2 transition-all duration-200 btn-ghost hover:btn-outline">
                 <ThemeController />
               </div>
-            </div>
+            </div> }
 
             {/* Right Section */}
             <div className="flex items-center gap-2 sm:gap-3">
